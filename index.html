@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Préstamos</title>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+    <h1>Simulador de Préstamos</h1>
+    <form id="loan-form">
+      <label for="amount">Monto del Préstamo:</label>
+      <input type="number" id="amount" required><br><br>
+      
+      <label for="months">Plazo en meses:</label>
+      <input type="number" id="months" required><br><br>
+      
+      <label for="client-type">Tipo de Cliente:</label>
+      <select id="client-type" required>
+        <option value="Simple">Normal</option>
+        <option value="Simple">Premium</option>
+        <option value="Insignia">VIP</option>
+      </select><br><br>
+      
+      <button type="submit">Calcular Cuota</button>
+    </form>
+    
+    <table id="amortization-table">
+      <thead>
+        <tr>
+          <th>Cuota #</th>
+          <th>Cuota Mensual</th>
+          <th>Capital Amortizado</th>
+          <th>Interés Pagado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  
+<script src="./js.js"></script>
+</body>
+</html>
+
