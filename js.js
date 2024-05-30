@@ -14,9 +14,12 @@ class Cliente {
 
     calcularCuota() {
       const tasaInteres = this.cliente.tasaInteres;
-      const cuotaInteres = this.monto * tasaInteres / 100;
-      const totalPrestamo = this.monto + cuotaInteres * this.plazo;
-      const cuotaMensual = totalPrestamo / this.plazo;
+      const tasaInteresmensual = tasaInteres / 1200;
+      const plazonegativo = this.plazo * (-1)
+      const cuotaInteres = this.monto * tasaInteresmensual;
+      const IVA = 0.21 * cuotaInteres;
+      const cuotainicial = this.monto * ((tasaInteresmensual)/(1-Math.pow((1+tasaInteresmensual),plazonegativo)));
+      const cuotaMensual = IVA + cuotainicial;
       return cuotaMensual.toFixed(2);
     }
   }
@@ -31,26 +34,24 @@ class Cliente {
 
   // Función para limpiar la tabla
   function limpiarTabla() {
-    const amortizacionTable = document.getElementById('amortization-table').getElementsByTagName('tbody')[0];
+    const amortizacionTable = document.getElementById('tabla_de_amortizacion').getElementsByTagName('tbody')[0];
     amortizacionTable.innerHTML = '';
   }
 
   // Función para calcular el amortización francés
   function calcularAmortizacion(prestamo) {
     const cuotaMensual = parseFloat(prestamo.calcularCuota());
-    const tasaInteres = prestamo.cliente.tasaInteres / 100;
+    const tasaInteresmensual = prestamo.cliente.tasaInteres / 1200;
+    const cuotaInteres = prestamo.monto * tasaInteresmensual;
+    const IVA = 0.21 * cuotaInteres;
     const saldoInicial = prestamo.monto;
     let saldoPendiente = saldoInicial;
-    const amortizacionTable = document.getElementById('amortization-table').getElementsByTagName('tbody')[0];
+
+    const amortizacionTable = document.getElementById('tabla_de_amortizacion').getElementsByTagName('tbody')[0];
 
     for (let i = 1; i <= prestamo.plazo; i++) {
-      const interes = saldoPendiente * tasaInteres;
-      let capitalAmortizado = cuotaMensual - interes;
-
-      // Ajustar capital amortizado si hace que el saldo pendiente sea negativo
-      if (saldoPendiente - capitalAmortizado < 0) {
-        capitalAmortizado = saldoPendiente;
-      }
+      const interes = saldoPendiente * tasaInteresmensual;
+      let capitalAmortizado = cuotaMensual - IVA - interes;
 
       saldoPendiente -= capitalAmortizado;
 
@@ -61,11 +62,6 @@ class Cliente {
         <td>$${capitalAmortizado.toFixed(2)}</td>
         <td>$${interes.toFixed(2)}</td>
       `;
-
-      // Salir del bucle si el saldo pendiente es cero o es la última cuota
-      if (saldoPendiente <= 0) {
-        break;
-      }
     }
 
     // Almacenar en localStorage
@@ -81,26 +77,26 @@ class Cliente {
     // Limpiar la tabla antes de agregar nuevas filas
     limpiarTabla();
 
-    const amount = parseFloat(document.getElementById('amount').value);
-    const months = parseInt(document.getElementById('months').value);
-    const clientType = document.getElementById('client-type').value;
+    const cantidad = parseFloat(document.getElementById('cantidad').value);
+    const meses = parseInt(document.getElementById('meses').value);
+    const clientType = document.getElementById('tipo_de_cliente').value;
 
     let cliente;
     switch (clientType) {
-      case 'normal':
-        cliente = new Cliente('Normal', 5); // Tasa de interés del 5%
+      case 'Simple':
+        cliente = new Cliente('Simple', 120); // Tasa de interés del 120%
         break;
-      case 'premium':
-        cliente = new Cliente('Premium', 3); // Tasa de interés del 3%
+      case 'Insignia':
+        cliente = new Cliente('Insignia', 100); // Tasa de interés del 100%
         break;
-      case 'vip':
-        cliente = new Cliente('VIP', 1); // Tasa de interés del 1%
+      case 'Premium':
+        cliente = new Cliente('Premium', 60); // Tasa de interés del 60%
         break;
       default:
-        cliente = new Cliente('Normal', 5);
+        cliente = new Cliente('Simple', 120);
     }
 
-    const prestamo = new Prestamo(amount, months, cliente);
+    const prestamo = new Prestamo(cantidad, meses, cliente);
     const cuotaMensual = prestamo.calcularCuota();
 
     mostrarMensaje(`La cuota mensual es de $${cuotaMensual}`, 'success');
